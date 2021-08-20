@@ -28,6 +28,7 @@ import com.linkedin.pegasus.gradle.tasks.GenerateDataTemplateTask;
 import com.linkedin.pegasus.gradle.tasks.GeneratePegasusSnapshotTask;
 import com.linkedin.pegasus.gradle.tasks.GenerateRestClientTask;
 import com.linkedin.pegasus.gradle.tasks.GenerateRestModelTask;
+import com.linkedin.pegasus.gradle.tasks.ListRoutesTask;
 import com.linkedin.pegasus.gradle.tasks.PublishRestModelTask;
 import com.linkedin.pegasus.gradle.tasks.TranslateSchemasTask;
 import com.linkedin.pegasus.gradle.tasks.ValidateExtensionSchemaTask;
@@ -832,6 +833,8 @@ public class PegasusPlugin implements Plugin<Project>
     ChangedFileReportTask changedFileReportTask = project.getTasks()
         .create("changedFilesReport", ChangedFileReportTask.class);
 
+    project.getTasks().create("routes");
+
     project.getTasks().getByName("check").dependsOn(changedFileReportTask);
 
     SourceSetContainer sourceSets = project.getConvention()
@@ -1402,6 +1405,11 @@ public class PegasusPlugin implements Plugin<Project>
                          )
                       )
                     ));
+          });
+
+      Task routesTask = project.getTasks()
+          .create(sourceSet.getTaskName("list", "Routes"), ListRoutesTask.class, task -> {
+            task.dependsOn(generateRestModelTask);
           });
 
       project.getLogger().info("API project selected for {} is {}",
